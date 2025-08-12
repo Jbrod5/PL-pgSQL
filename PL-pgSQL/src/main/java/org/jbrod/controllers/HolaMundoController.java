@@ -1,10 +1,12 @@
 package org.jbrod.controllers;
 
-
-import javafx.event.ActionEvent;
+import org.jbrod.application.ui.EditorPanel; // tu clase EditorPanel
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
+
+import java.nio.file.Paths;
 
 public class HolaMundoController {
 
@@ -15,8 +17,20 @@ public class HolaMundoController {
     private Label lblMensajito;
 
     @FXML
-    void click(ActionEvent event) {
-        System.out.println("Hola a todos desde botoncito1 :3");
-        lblMensajito.setText("Hola a todos en mensajito desde botoncito1 :3");
+    private BorderPane editorContainer;
+
+    @FXML
+    public void initialize() {
+        // Aquí le pasas la carpeta que quieras explorar
+        String path = "/home/jorge/Escritorio/Pruebas texto";
+        EditorPanel editorPanel = new EditorPanel(Paths.get(path));
+
+        // Colocar el editor en el centro del BorderPane
+        editorContainer.setCenter(editorPanel);
+    }
+
+    @FXML
+    private void click() {
+        lblMensajito.setText("Hola a todos desde botoncito1 :3");
     }
 }
