@@ -21,6 +21,8 @@ public class EditorPanel extends BorderPane {
     private final TabPane tabPane = new TabPane();
     private final Map<Path, Tab> openTabs = new HashMap<>();
 
+
+
     public EditorPanel(Path rootPath) {
         setPrefSize(1000, 700);
         setPadding(new Insets(6));
@@ -55,11 +57,12 @@ public class EditorPanel extends BorderPane {
             }
         });
 
+
         // Layout: dejar TreeView a la izquierda y TabPane al centro/derecha
         // Ajustes de tamaño
         treeView.setPrefWidth(300);
         setLeft(treeView);
-        setCenter(tabPane);
+        setRight(tabPane);
         BorderPane.setMargin(treeView, new Insets(4));
         BorderPane.setMargin(tabPane, new Insets(4));
     }
@@ -79,6 +82,14 @@ public class EditorPanel extends BorderPane {
         }
         return item;
     }
+
+
+
+
+
+
+
+
 
     // Abre el archivo en una pestaña (si ya está abierta, la selecciona)
     private void openFileInTab(Path file) {
