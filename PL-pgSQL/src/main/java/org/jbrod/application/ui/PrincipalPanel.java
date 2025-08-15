@@ -16,6 +16,7 @@ public class PrincipalPanel extends SplitPane {
 
     public PrincipalPanel(String rootDirectoryPath) {
 
+
         // - - - - - - - - - - - - - Lado izquierdo - - - - - - - - - - - - - - - -
         // Colocar el arbol de archivos
         File rootDPath = new File(rootDirectoryPath);
