@@ -23,10 +23,10 @@ public class HolaMundoController {
     public void initialize() {
         // Aquí le pasas la carpeta que quieras explorar
         String path = "/home/jorge/Escritorio/Pruebas texto";
-        EditorPanel editorPanel = new EditorPanel(Paths.get(path));
+        //EditorPanel editorPanel = new EditorPanel(Paths.get(path));
 
         // Colocar el editor en el centro del BorderPane
-        editorContainer.setCenter(editorPanel);
+       // editorContainer.setCenter(editorPanel);
     }
 
     @FXML

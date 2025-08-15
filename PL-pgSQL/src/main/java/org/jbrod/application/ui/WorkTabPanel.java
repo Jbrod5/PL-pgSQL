@@ -4,6 +4,8 @@ import javafx.geometry.Orientation;
 import javafx.scene.control.Button;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 import java.io.File;
@@ -19,6 +21,8 @@ public class WorkTabPanel extends VBox {
     private SplitPane horizontal;
 
     private TextArea textArea;
+    private EditorPanel editorPanel;
+
     private TextArea analyzeMessages;
 
 
@@ -43,17 +47,19 @@ public class WorkTabPanel extends VBox {
         horizontal = new SplitPane();
 
         //2.1 Editor de texto
-        this.textArea = new TextArea(); //area de trabajo de codigo
+        //this.textArea = new TextArea(); //area de trabajo de codigo
+        editorPanel = new EditorPanel(file);
         // Leer contenido del archivo y cargar el texto en el TextArea
-        try {
-            String content = Files.readString(file.toPath());
-            textArea.setText(content);
-        } catch (IOException e) {
-            textArea.setText("No se pudo cargar el archivo: " + e.getMessage());
-        }
+        //try {
+        //String content = Files.readString(file.toPath());
+        //    textArea.setText(content);
+        //} catch (IOException e) {
+        //    textArea.setText("No se pudo cargar el archivo: " + e.getMessage());
+        //}
+
         //2.2 otra area (por definir)
         TextArea placeholder = new TextArea();
-        horizontal.getItems().addAll(textArea,placeholder );
+        horizontal.getItems().addAll(editorPanel, placeholder );
 
 
 
@@ -63,6 +69,7 @@ public class WorkTabPanel extends VBox {
 
         //Cargar los paneles en el vertical
         VBox.setVgrow(vertical, javafx.scene.layout.Priority.ALWAYS);
+        HBox.setHgrow(editorPanel, javafx.scene.layout.Priority.ALWAYS);
         vertical.getItems().addAll(horizontal, analyzeMessages);
         vertical.setDividerPositions(0.8);
 
