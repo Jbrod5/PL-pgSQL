@@ -1,0 +1,16 @@
+NOTACION EBNF:
+| -> or
+[] -> opcional (puede venir o no, o sea, cero o una vez)
+{} -> repeticion (puede venir cero o más veces)
+() -> agrupacion 
+"..."_"..." -> rango de caracteres (es como hacer [a-z])
+; -> final de regla
+
+
+
+EBNF para mi lenguaje :3  : 
+
+letra = ("a"_"z"|"A"_"Z");
+digito = "0"_"9";
+
+identificador = (letra | "_") {letra | digito | "_"};
