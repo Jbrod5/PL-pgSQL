@@ -18,7 +18,7 @@ digito = "0"_"9";
 identificador = (letra | "_") {letra | digito | "_"};
 
 - - - - - - - - - - - - - - - - - DDL (Data Definition Languaje)- - - - - - - - - - - - - - - - - 
-//Palabras reservadas:
+//Palabras reservadas - - - - - - - - - - -:
 
 create = "CREATE";
 schema = "SCHEMA";
@@ -31,6 +31,7 @@ tipo = "TIPO";
 drop =  "DROP";
 constraint = "CONSTRAINT";
 foreign = "FOREIGN";
+primary = "PRIMARY";
 key = "KEY";
 references = "REFERENCES";
 
@@ -45,7 +46,21 @@ comma = ",";
 not = "NOT";
 null = "NULL";
 
-//Estructura del DDL:
+
+
+//Estructura del DDL - - - - - - - - - - -:
+
 create_schema = create schema identificador;
 use_schema = use schema identificador;
-create_table = create table identificador par_opn    par_cls pnt_cma;
+
+tipo_dato = integer | varchar "(" digito {digito} ")" | boolean;
+restriccion_columna = [ primary key ] [ not null | null ];
+columna = identificador tipo_dato restriccion_columna;
+llave_foranea = foreign key par_opn identificador par_cls references identificador par_opn identificador par_cls;
+elemento_tabla = columna | llave_foranea;
+lista_elementos = elemento_tabla { comma elemento_tabla };
+
+
+
+create_table = create table identificador par_opn    lista_elementos    par_cls pnt_cma;
+
