@@ -15,10 +15,15 @@ dot = ".";
 
 identificador = (letra | "_") {letra | digito | "_"};
 
+<<<<<<< HEAD
 numero = digito {digito};
 booleano = "true" | "false";
 string = "\"" { letra | digito | " " | "_" } "\"";
 valor_op = numero | booleano | string;
+=======
+- - - - - - - - - - - - - - - - - DDL (Data Definition Languaje)- - - - - - - - - - - - - - - - - 
+//Palabras reservadas - - - - - - - - - - -:
+>>>>>>> d15a1ea5731028895d947b6567edea6fc9264801
 
 opciones = identificador { comma identificador };
 valores = valor_op { comma valor_op };
@@ -52,7 +57,11 @@ comma = ",";
 not = "NOT";
 null = "NULL";
 
-// Estructura DDL
+
+
+
+//Estructura del DDL - - - - - - - - - - -:
+
 create_schema = create schema identificador;
 use_schema = use schema identificador;
 
