@@ -1,25 +1,31 @@
 NOTACION EBNF:
 | -> or
-[] -> opcional (puede venir o no, o sea, cero o una vez)
-{} -> repeticion (puede venir cero o más veces)
+[] -> opcional (cero o una vez)
+{} -> repeticion (cero o más veces)
 () -> agrupacion 
-"..."_"..." -> rango de caracteres (es como hacer [a-z])
+"..."_"..." -> rango de caracteres (como [a-z])
 ; -> final de regla
-
-
-
-EBNF para mi lenguaje :3  : 
 
 - - - - - - - - - - - - - - - - - - - - COSAS GENERALES - - - - - - - - - - - - - - - - - - - -
 
 letra = ("a"_"z"|"A"_"Z");
 digito = "0"_"9";
+equals = "=";
+dot = ".";
 
 identificador = (letra | "_") {letra | digito | "_"};
 
-- - - - - - - - - - - - - - - - - DDL (Data Definition Languaje)- - - - - - - - - - - - - - - - - 
-//Palabras reservadas:
+numero = digito {digito};
+booleano = "true" | "false";
+string = "\"" { letra | digito | " " | "_" } "\"";
+valor_op = numero | booleano | string;
 
+opciones = identificador { comma identificador };
+valores = valor_op { comma valor_op };
+
+- - - - - - - - - - - - - - - - - DDL (Data Definition Language) - - - - - - - - - - - - - - - - -
+
+// Palabras reservadas
 create = "CREATE";
 schema = "SCHEMA";
 use = "USE";
@@ -31,6 +37,7 @@ tipo = "TIPO";
 drop =  "DROP";
 constraint = "CONSTRAINT";
 foreign = "FOREIGN";
+primary = "PRIMARY";
 key = "KEY";
 references = "REFERENCES";
 
@@ -45,7 +52,60 @@ comma = ",";
 not = "NOT";
 null = "NULL";
 
-//Estructura del DDL:
+// Estructura DDL
 create_schema = create schema identificador;
 use_schema = use schema identificador;
-create_table = create table identificador par_opn    par_cls pnt_cma;
+
+tipo_dato = integer | varchar "(" digito {digito} ")" | boolean;
+restriccion_columna = [ primary key ] [ not null | null ];
+columna = identificador tipo_dato restriccion_columna;
+
+llave_foranea = foreign key par_opn identificador par_cls references identificador par_opn identificador par_cls;
+
+elemento_tabla = columna | llave_foranea;
+lista_elementos = elemento_tabla { comma elemento_tabla };
+
+create_table = create table identificador par_opn lista_elementos par_cls pnt_cma;
+
+alter_add_column = alter table identificador add column columna pnt_cma;
+alter_drop_column = alter table identificador drop column identificador pnt_cma;
+alter_add_constraint = alter table identificador add constraint identificador llave_foranea pnt_cma;
+alter_drop_constraint = alter table identificador drop constraint identificador pnt_cma;
+
+drop_table = drop table identificador pnt_cma;
+
+- - - - - - - - - - - - - - DML (Data Manipulation Language) - - - - - - - - - - - - - - - - -
+
+insert  = "INSERT";
+into    = "INTO";
+values  = "VALUES";
+update  = "UPDATE";
+set     = "SET";
+where   = "WHERE";
+delete  = "DELETE";
+from    = "FROM";
+select  = "SELECT";
+
+insert_into = insert into identificador par_opn opciones par_cls values par_opn valores par_cls;
+
+asignaciones = identificador equals valor_op { comma identificador equals valor_op };
+update_sentence = update identificador set asignaciones where identificador equals valor_op;
+
+delete_sentence = delete from identificador where identificador equals valor_op;
+
+columnas = identificador { comma identificador };
+select_sentence = select columnas from identificador where identificador equals valor_op;
+
+- - - - - - - - - - - - - - DCL (Data Control Language) - - - - - - - - - - - - - - - - -
+
+permiso = select | insert | update | delete;
+
+user = "USER";
+grant = "GRANT";
+on = "ON";
+to = "TO";
+revoke = "REVOKE";
+
+create_user = create user identificador pnt_cma;
+grant_perm = grant permiso on identificador dot identificador to identificador pnt_cma;
+revoke_perm = revoke permiso on identificador from identificador pnt_cma;
