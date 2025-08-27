@@ -12,18 +12,14 @@ letra = ("a"_"z"|"A"_"Z");
 digito = "0"_"9";
 equals = "=";
 dot = ".";
+all_sym = "*";
 
 identificador = (letra | "_") {letra | digito | "_"};
 
-<<<<<<< HEAD
 numero = digito {digito};
 booleano = "true" | "false";
-string = "\"" { letra | digito | " " | "_" } "\"";
+string = '"' (~["\r\n])* '"';
 valor_op = numero | booleano | string;
-=======
-- - - - - - - - - - - - - - - - - DDL (Data Definition Languaje)- - - - - - - - - - - - - - - - - 
-//Palabras reservadas - - - - - - - - - - -:
->>>>>>> d15a1ea5731028895d947b6567edea6fc9264801
 
 opciones = identificador { comma identificador };
 valores = valor_op { comma valor_op };
@@ -57,11 +53,7 @@ comma = ",";
 not = "NOT";
 null = "NULL";
 
-
-
-
-//Estructura del DDL - - - - - - - - - - -:
-
+// Estructura del DDL
 create_schema = create schema identificador;
 use_schema = use schema identificador;
 
@@ -94,6 +86,9 @@ where   = "WHERE";
 delete  = "DELETE";
 from    = "FROM";
 select  = "SELECT";
+join    = "JOIN";
+left_join = "LEFT JOIN";
+on = "ON";
 
 insert_into = insert into identificador par_opn opciones par_cls values par_opn valores par_cls;
 
@@ -102,8 +97,14 @@ update_sentence = update identificador set asignaciones where identificador equa
 
 delete_sentence = delete from identificador where identificador equals valor_op;
 
-columnas = identificador { comma identificador };
-select_sentence = select columnas from identificador where identificador equals valor_op;
+columna_prefijo = [ identificador dot ] identificador;
+columnas = columna_prefijo { comma columna_prefijo };
+
+join_type = join | left_join;
+join_clause = join_type identificador on columna_prefijo equals columna_prefijo;
+join_list = join_clause { join_clause };
+
+select_sentence = select columnas from identificador { join_list } [ where columna_prefijo equals valor_op ];
 
 - - - - - - - - - - - - - - DCL (Data Control Language) - - - - - - - - - - - - - - - - -
 
@@ -115,6 +116,8 @@ on = "ON";
 to = "TO";
 revoke = "REVOKE";
 
+tabla_op = identificador | all_sym;  
+
 create_user = create user identificador pnt_cma;
-grant_perm = grant permiso on identificador dot identificador to identificador pnt_cma;
+grant_perm = grant permiso on identificador dot tabla_op to identificador pnt_cma;
 revoke_perm = revoke permiso on identificador from identificador pnt_cma;
