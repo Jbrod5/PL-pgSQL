@@ -11,6 +11,12 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
  */
 public interface SQLVisitor<T> extends ParseTreeVisitor<T> {
 	/**
+	 * Visit a parse tree produced by {@link SQLParser#sql_script}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSql_script(SQLParser.Sql_scriptContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link SQLParser#valor_op}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -28,6 +34,12 @@ public interface SQLVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitOpciones(SQLParser.OpcionesContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SQLParser#ddl_sentence}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDdl_sentence(SQLParser.Ddl_sentenceContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link SQLParser#create_schema}.
 	 * @param ctx the parse tree
@@ -113,6 +125,12 @@ public interface SQLVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDrop_table(SQLParser.Drop_tableContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link SQLParser#dml_sentence}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDml_sentence(SQLParser.Dml_sentenceContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link SQLParser#insert_into}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -172,6 +190,12 @@ public interface SQLVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitSelect_sentence(SQLParser.Select_sentenceContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SQLParser#dcl_sentence}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDcl_sentence(SQLParser.Dcl_sentenceContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link SQLParser#permiso}.
 	 * @param ctx the parse tree

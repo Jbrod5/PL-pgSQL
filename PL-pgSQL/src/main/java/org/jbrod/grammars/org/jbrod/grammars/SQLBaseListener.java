@@ -17,6 +17,18 @@ public class SQLBaseListener implements SQLListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterSql_script(SQLParser.Sql_scriptContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSql_script(SQLParser.Sql_scriptContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterValor_op(SQLParser.Valor_opContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -48,6 +60,18 @@ public class SQLBaseListener implements SQLListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitOpciones(SQLParser.OpcionesContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDdl_sentence(SQLParser.Ddl_sentenceContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDdl_sentence(SQLParser.Ddl_sentenceContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -221,6 +245,18 @@ public class SQLBaseListener implements SQLListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterDml_sentence(SQLParser.Dml_sentenceContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDml_sentence(SQLParser.Dml_sentenceContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterInsert_into(SQLParser.Insert_intoContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -336,6 +372,18 @@ public class SQLBaseListener implements SQLListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitSelect_sentence(SQLParser.Select_sentenceContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDcl_sentence(SQLParser.Dcl_sentenceContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDcl_sentence(SQLParser.Dcl_sentenceContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

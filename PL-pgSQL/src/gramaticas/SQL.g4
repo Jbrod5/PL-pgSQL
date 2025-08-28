@@ -1,9 +1,10 @@
 grammar SQL;
 
-// ====================================================
-// LEXER RULES (tokens)
-// ====================================================
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - LEXER - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+//Palabras reservadas
 CREATE      : 'CREATE';
 SCHEMA      : 'SCHEMA';
 USE         : 'USE';
@@ -11,7 +12,6 @@ TABLE       : 'TABLE';
 ALTER       : 'ALTER';
 ADD         : 'ADD';
 COLUMN      : 'COLUMN';
-TIPO        : 'TIPO';
 DROP        : 'DROP';
 CONSTRAINT  : 'CONSTRAINT';
 FOREIGN     : 'FOREIGN';
@@ -39,18 +39,20 @@ USER        : 'USER';
 GRANT       : 'GRANT';
 TO          : 'TO';
 REVOKE      : 'REVOKE';
-ALL_SYM     : '*';
 
 NOT         : 'NOT';
 NULL        : 'NULL';
 
+//Simbolos
 EQUALS      : '=';
 DOT         : '.';
 COMMA       : ',';
 LPAREN      : '(';
 RPAREN      : ')';
 SEMICOLON   : ';';
+ALL_SYM     : '*';
 
+//Valores
 TRUE        : 'true';
 FALSE       : 'false';
 
@@ -70,12 +72,33 @@ NUMERO
 WS
     : [ \t\r\n]+ -> skip
     ;
+// Ignorar comentarios
+COMENTARIO
+    : '--' ~[\r\n]* -> skip
+    ;
 
-// ====================================================
-// PARSER RULES
-// ====================================================
 
-// ------------------ COSAS GENERALES ------------------
+
+
+
+
+
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - -  PARSER - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+// - - - - - - - - - - - - - - - - - - Inicio - - - - - - - -
+sql_script
+    : (dcl_sentence | dml_sentence | ddl_sentence)* EOF
+    ;
+
+
+
+
+
+//- - - - - - - - COSAS GENERALES - - - - - - - -
 
 valor_op
     : NUMERO
@@ -92,14 +115,28 @@ opciones
     : IDENTIFICADOR (COMMA IDENTIFICADOR)*
     ;
 
-// ------------------ DDL ------------------
+
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - DDL - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+ddl_sentence
+    : create_schema
+    | use_schema
+    | create_table
+    | alter_add_column
+    | alter_drop_column
+    | drop_table
+    | alter_add_constraint
+    | alter_drop_constraint
+    ;
 
 create_schema
-    : CREATE SCHEMA IDENTIFICADOR
+    : CREATE SCHEMA IDENTIFICADOR SEMICOLON
     ;
 
 use_schema
-    : USE SCHEMA IDENTIFICADOR
+    : USE SCHEMA IDENTIFICADOR SEMICOLON
     ;
 
 tipo_dato
@@ -153,10 +190,19 @@ drop_table
     : DROP TABLE IDENTIFICADOR SEMICOLON
     ;
 
-// ------------------ DML ------------------
+
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - DML - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+dml_sentence
+    : insert_into
+    | update_sentence
+    | delete_sentence
+    | select_sentence
+    ;
 
 insert_into
-    : INSERT INTO IDENTIFICADOR LPAREN opciones RPAREN VALUES LPAREN valores RPAREN
+    : INSERT INTO IDENTIFICADOR LPAREN opciones RPAREN VALUES LPAREN valores RPAREN SEMICOLON
     ;
 
 asignaciones
@@ -164,11 +210,11 @@ asignaciones
     ;
 
 update_sentence
-    : UPDATE IDENTIFICADOR SET asignaciones WHERE IDENTIFICADOR EQUALS valor_op
+    : UPDATE IDENTIFICADOR SET asignaciones WHERE IDENTIFICADOR EQUALS valor_op SEMICOLON
     ;
 
 delete_sentence
-    : DELETE FROM IDENTIFICADOR WHERE IDENTIFICADOR EQUALS valor_op
+    : DELETE FROM IDENTIFICADOR WHERE IDENTIFICADOR EQUALS valor_op SEMICOLON
     ;
 
 columna_prefijo
@@ -193,10 +239,18 @@ join_list
     ;
 
 select_sentence
-    : SELECT columnas FROM IDENTIFICADOR join_list? (WHERE columna_prefijo EQUALS valor_op)?
+    : SELECT columnas FROM IDENTIFICADOR join_list? (WHERE columna_prefijo EQUALS valor_op)? SEMICOLON
     ;
 
-// ------------------ DCL ------------------
+
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - DCL - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+dcl_sentence
+    : create_user
+    | grant_perm
+    | revoke_perm
+    ;
 
 permiso
     : SELECT
@@ -221,3 +275,7 @@ grant_perm
 revoke_perm
     : REVOKE permiso ON IDENTIFICADOR FROM IDENTIFICADOR SEMICOLON
     ;
+
+
+
+

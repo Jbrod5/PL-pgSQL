@@ -8,6 +8,16 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface SQLListener extends ParseTreeListener {
 	/**
+	 * Enter a parse tree produced by {@link SQLParser#sql_script}.
+	 * @param ctx the parse tree
+	 */
+	void enterSql_script(SQLParser.Sql_scriptContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SQLParser#sql_script}.
+	 * @param ctx the parse tree
+	 */
+	void exitSql_script(SQLParser.Sql_scriptContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link SQLParser#valor_op}.
 	 * @param ctx the parse tree
 	 */
@@ -37,6 +47,16 @@ public interface SQLListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitOpciones(SQLParser.OpcionesContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SQLParser#ddl_sentence}.
+	 * @param ctx the parse tree
+	 */
+	void enterDdl_sentence(SQLParser.Ddl_sentenceContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SQLParser#ddl_sentence}.
+	 * @param ctx the parse tree
+	 */
+	void exitDdl_sentence(SQLParser.Ddl_sentenceContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link SQLParser#create_schema}.
 	 * @param ctx the parse tree
@@ -178,6 +198,16 @@ public interface SQLListener extends ParseTreeListener {
 	 */
 	void exitDrop_table(SQLParser.Drop_tableContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link SQLParser#dml_sentence}.
+	 * @param ctx the parse tree
+	 */
+	void enterDml_sentence(SQLParser.Dml_sentenceContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SQLParser#dml_sentence}.
+	 * @param ctx the parse tree
+	 */
+	void exitDml_sentence(SQLParser.Dml_sentenceContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link SQLParser#insert_into}.
 	 * @param ctx the parse tree
 	 */
@@ -277,6 +307,16 @@ public interface SQLListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitSelect_sentence(SQLParser.Select_sentenceContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SQLParser#dcl_sentence}.
+	 * @param ctx the parse tree
+	 */
+	void enterDcl_sentence(SQLParser.Dcl_sentenceContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SQLParser#dcl_sentence}.
+	 * @param ctx the parse tree
+	 */
+	void exitDcl_sentence(SQLParser.Dcl_sentenceContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link SQLParser#permiso}.
 	 * @param ctx the parse tree
