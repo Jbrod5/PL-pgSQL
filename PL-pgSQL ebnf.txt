@@ -1,0 +1,43 @@
+NOTACION EBNF:
+| -> or
+[] -> opcional (cero o una vez)
+{} -> repeticion (cero o más veces)
+() -> agrupacion 
+"..."_"..." -> rango de caracteres (como [a-z])
+; -> final de regla
+
+
+
+//- - - - - - - - - - - - - -  Cosas generales - - - - - - - - - - - - - - 
+
+letra = ("a"_"z"|"A"_"Z");
+digito = "0"_"9";
+identificador = (letra | "_") {letra | digito | "_"};
+puntocoma = ";";
+asignacion = ":=";
+
+
+
+// - - - - - - - - - - - - Declaraciones y tipado - - - - - - - - - - - - 
+
+//Palabras reservadas
+declare = "DECLARE"; 
+cor_opn = "["
+cor_cls = "]"
+
+//Tipos
+integer = "INTEGER"; 
+decimal = "DECIMAL"; 
+varchar = "VARCHAR"; 
+char = "CHAR";
+boolean = "BOOLEAN"; 
+ARRAY = "ARRAY";
+date = "DATE"; 
+
+tipo = integer | decimal | varchar | char | boolean | date;
+tipo_array = tipo cor_opn cor_cls 
+
+
+
+declaracion = declare declaraciones; 
+declaraciones = identificador 
