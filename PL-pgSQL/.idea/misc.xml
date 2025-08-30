@@ -6,7 +6,7 @@
         <PerGrammarGenerationSettings>
           <option name="fileName" value="$PROJECT_DIR$/src/gramaticas/SQL.g4" />
           <option name="autoGen" value="true" />
-          <option name="outputDir" value="$PROJECT_DIR$/src/main/java/org/jbrod/grammars" />
+          <option name="outputDir" value="$PROJECT_DIR$/src/main/java/org/jbrod" />
           <option name="libDir" value="" />
           <option name="encoding" value="" />
           <option name="pkg" value="org.jbrod.grammars" />

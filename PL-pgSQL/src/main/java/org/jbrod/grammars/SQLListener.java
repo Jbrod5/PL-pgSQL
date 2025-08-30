@@ -58,15 +58,17 @@ public interface SQLListener extends ParseTreeListener {
 	 */
 	void exitDdl_sentence(SQLParser.Ddl_sentenceContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link SQLParser#create_schema}.
+	 * Enter a parse tree produced by the {@code PRUEBA}
+	 * labeled alternative in {@link SQLParser#create_schema}.
 	 * @param ctx the parse tree
 	 */
-	void enterCreate_schema(SQLParser.Create_schemaContext ctx);
+	void enterPRUEBA(SQLParser.PRUEBAContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link SQLParser#create_schema}.
+	 * Exit a parse tree produced by the {@code PRUEBA}
+	 * labeled alternative in {@link SQLParser#create_schema}.
 	 * @param ctx the parse tree
 	 */
-	void exitCreate_schema(SQLParser.Create_schemaContext ctx);
+	void exitPRUEBA(SQLParser.PRUEBAContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link SQLParser#use_schema}.
 	 * @param ctx the parse tree

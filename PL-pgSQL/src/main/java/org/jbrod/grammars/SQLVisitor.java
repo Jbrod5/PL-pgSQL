@@ -41,11 +41,12 @@ public interface SQLVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDdl_sentence(SQLParser.Ddl_sentenceContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link SQLParser#create_schema}.
+	 * Visit a parse tree produced by the {@code PRUEBA}
+	 * labeled alternative in {@link SQLParser#create_schema}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitCreate_schema(SQLParser.Create_schemaContext ctx);
+	T visitPRUEBA(SQLParser.PRUEBAContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link SQLParser#use_schema}.
 	 * @param ctx the parse tree

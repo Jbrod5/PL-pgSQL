@@ -132,7 +132,7 @@ ddl_sentence
     ;
 
 create_schema
-    : CREATE SCHEMA IDENTIFICADOR SEMICOLON
+    : CREATE SCHEMA id = IDENTIFICADOR SEMICOLON    #PRUEBA
     ;
 
 use_schema

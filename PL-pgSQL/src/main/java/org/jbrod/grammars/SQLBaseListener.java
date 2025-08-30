@@ -77,13 +77,13 @@ public class SQLBaseListener implements SQLListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterCreate_schema(SQLParser.Create_schemaContext ctx) { }
+	@Override public void enterPRUEBA(SQLParser.PRUEBAContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitCreate_schema(SQLParser.Create_schemaContext ctx) { }
+	@Override public void exitPRUEBA(SQLParser.PRUEBAContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
