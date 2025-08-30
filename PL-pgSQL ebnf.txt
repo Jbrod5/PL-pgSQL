@@ -1,43 +1,58 @@
-NOTACION EBNF:
-| -> or
-[] -> opcional (cero o una vez)
-{} -> repeticion (cero o más veces)
-() -> agrupacion 
-"..."_"..." -> rango de caracteres (como [a-z])
-; -> final de regla
-
-
-
 //- - - - - - - - - - - - - -  Cosas generales - - - - - - - - - - - - - - 
 
-letra = ("a"_"z"|"A"_"Z");
-digito = "0"_"9";
-identificador = (letra | "_") {letra | digito | "_"};
-puntocoma = ";";
-asignacion = ":=";
+letra          = ("a"_"z"|"A"_"Z");
+digito         = "0"_"9";
+identificador  = (letra | "_") {letra | digito | "_"};
 
+true           = "TRUE";
+false          = "FALSE";
+
+puntocoma      = ";";
+asignacion     = ":=";
+coma           = ",";
+
+booleano       = true | false;
+string         = '"' (~["\r\n])* '"';      '// Texto con comillas dobles
+char_literal   = "'" (letra|digito) "'";   // Un solo carácter con comillas simples
+numero         = digito+;
+fecha          = digito digito digito digito "-" digito digito "-" digito digito;
+
+valor          = string | char_literal | numero | fecha | identificador | booleano;
+valores        = valor {coma valor};
 
 
 // - - - - - - - - - - - - Declaraciones y tipado - - - - - - - - - - - - 
 
 //Palabras reservadas
-declare = "DECLARE"; 
-cor_opn = "["
-cor_cls = "]"
+declare        = "DECLARE"; 
+cor_opn        = "[";
+cor_cls        = "]";
 
 //Tipos
-integer = "INTEGER"; 
-decimal = "DECIMAL"; 
-varchar = "VARCHAR"; 
-char = "CHAR";
-boolean = "BOOLEAN"; 
-ARRAY = "ARRAY";
-date = "DATE"; 
+integer        = "INTEGER"; 
+decimal        = "DECIMAL"; 
+varchar        = "VARCHAR" "(" numero ")"; // VARCHAR con tamaño
+char           = "CHAR"; 
+boolean        = "BOOLEAN"; 
+date           = "DATE"; 
+array          = "ARRAY"; 
 
-tipo = integer | decimal | varchar | char | boolean | date;
-tipo_array = tipo cor_opn cor_cls 
+tipo_base      = integer | decimal | varchar | char | boolean | date ;
+tipo_array     = tipo_base cor_opn cor_cls ;   // ARRAY de tipo_base
+tipo           = tipo_base | tipo_array;
 
+//Declaraciones normales: DECLARE var tipo;  o  DECLARE var tipo := valor;
+declaracion_normal 
+               = identificador tipo puntocoma
+               | identificador tipo asignacion valor puntocoma;  
 
+//Declaración de arrays
+declaracion_array 
+               = identificador tipo_array puntocoma
+               | identificador tipo_array asignacion array cor_opn valores cor_cls puntocoma;  
 
-declaracion = declare declaraciones; 
-declaraciones = identificador 
+//Agrupador de declaraciones
+declaraciones  = (declaracion_normal | declaracion_array)+;
+
+//Regla principal para bloque DECLARE
+declaracion    = declare declaraciones; 
