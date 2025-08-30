@@ -1,5 +1,5 @@
 // Generated from /home/jorge/Compi_2/PL-pgSQL/PL-pgSQL/src/gramaticas/SQL.g4 by ANTLR 4.13.2
-package org.jbrod.grammars;
+package org.jbrod.grammars.sql;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.*;

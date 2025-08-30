@@ -1,4 +1,4 @@
-package org.jbrod.grammars;
+package org.jbrod.grammars.sql;
 
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
