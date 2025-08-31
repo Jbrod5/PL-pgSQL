@@ -1,15 +1,20 @@
-//- - - - - - - - - - - - - -  Cosas generales - - - - - - - - - - - - - - 
+NOTACION EBNF:
+| -> or
+[] -> opcional (cero o una vez)
+{} -> repeticion (cero o más veces)
+() -> agrupacion 
+"..."_"..." -> rango de caracteres (como [a-z])
+; -> final de regla
 
+//- - - - - - - - - - - - - - - Cosas generales - - - - - - - - - - - - - - - 
+
+// - - valores - - - - - - - -
 letra          = ("a"_"z"|"A"_"Z");
 digito         = "0"_"9";
 identificador  = (letra | "_") {letra | digito | "_"};
 
 true           = "TRUE";
 false          = "FALSE";
-
-puntocoma      = ";";
-asignacion     = ":=";
-coma           = ",";
 
 booleano       = true | false;
 string         = '"' (~["\r\n])* '"';      '// Texto con comillas dobles
@@ -20,15 +25,35 @@ fecha          = digito digito digito digito "-" digito digito "-" digito digito
 valor          = string | char_literal | numero | fecha | identificador | booleano;
 valores        = valor {coma valor};
 
+// - - signos - - - - - - - -
+puntocoma      = ";";
+asignacion     = ":=";
+coma           = ",";
 
-// - - - - - - - - - - - - Declaraciones y tipado - - - - - - - - - - - - 
+mas            = "+";
+menos          = "-";
+por            = "*";
+dividido       = "/";
+elevado        = "^";
 
-//Palabras reservadas
+mayor       = ">"   ;
+menor       = "<"   ;
+mayor_igual = ">="  ;
+menor_igual = "<="  ;
+igual       = "="   ;
+diferente   = "<>"  ;
+
+or  = "OR" ;
+and = "AND";
+not = "NOT";
+
+
+// - - - - - - - - - - - - - - - - Declaraciones y tipado - - - - - - - - - - - - 
+
 declare        = "DECLARE"; 
 cor_opn        = "[";
 cor_cls        = "]";
 
-//Tipos
 integer        = "INTEGER"; 
 decimal        = "DECIMAL"; 
 varchar        = "VARCHAR" "(" numero ")"; // VARCHAR con tamaño
@@ -41,18 +66,63 @@ tipo_base      = integer | decimal | varchar | char | boolean | date ;
 tipo_array     = tipo_base cor_opn cor_cls ;   // ARRAY de tipo_base
 tipo           = tipo_base | tipo_array;
 
-//Declaraciones normales: DECLARE var tipo;  o  DECLARE var tipo := valor;
+// Declaraciones normales
 declaracion_normal 
                = identificador tipo puntocoma
-               | identificador tipo asignacion valor puntocoma;  
+               | identificador tipo asignacion expresion puntocoma;  
 
-//Declaración de arrays
+// Declaración de arrays
 declaracion_array 
                = identificador tipo_array puntocoma
                | identificador tipo_array asignacion array cor_opn valores cor_cls puntocoma;  
 
-//Agrupador de declaraciones
+// Agrupador de declaraciones
 declaraciones  = (declaracion_normal | declaracion_array)+;
 
-//Regla principal para bloque DECLARE
+// Regla principal para bloque DECLARE
 declaracion    = declare declaraciones; 
+
+
+// - - - - - - - - - - - - - - - - Operaciones - - - - - - - - - - - - - - - - 
+
+expresion = valor_aritmetico
+          | valor_condicional_booleano
+          | valor;
+
+// Operaciones aritméticas
+suma           = expresion mas expresion;
+resta          = expresion menos expresion;
+multiplicacion = expresion por expresion;
+division       = expresion dividido expresion;
+potencia       = expresion elevado expresion;
+
+// Operaciones relacionales
+op_mayor_que   = expresion mayor        expresion;
+op_menor_que   = expresion menor        expresion; 
+op_mayor_igual = expresion mayor_igual  expresion; 
+op_menor_igual = expresion menor_igual  expresion; 
+op_igual       = expresion igual        expresion; 
+op_diferente   = expresion diferente    expresion;  
+
+// Operaciones booleanas
+op_or  = expresion or expresion;   
+op_and = expresion and expresion;
+op_not = not expresion; 
+
+valor_aritmetico = suma
+                 | resta
+                 | multiplicacion
+                 | division
+                 | potencia
+                 ;
+
+valor_condicional_booleano = op_mayor_que
+                            | op_menor_que
+                            | op_mayor_igual
+                            | op_menor_igual
+                            | op_igual
+                            | op_diferente
+                            | op_or
+                            | op_and
+                            | op_not
+                            ;

@@ -18,7 +18,7 @@ identificador = (letra | "_") {letra | digito | "_"};
 
 numero = digito {digito};
 booleano = "true" | "false";
-string = '"' (~["\r\n])* '"';
+string = '"' (~["\r\n])* '"';     
 valor_op = numero | booleano | string;
 
 opciones = identificador { comma identificador };
