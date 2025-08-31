@@ -1,12 +1,17 @@
 NOTACION EBNF:
-| -> or
+|  -> or
 [] -> opcional (cero o una vez)
 {} -> repeticion (cero o más veces)
 () -> agrupacion 
 "..."_"..." -> rango de caracteres (como [a-z])
-; -> final de regla
+;  -> final de regla
 
-//- - - - - - - - - - - - - - - Cosas generales - - - - - - - - - - - - - - - 
+// - - - - - - - - - - - - - - - - - PUNTO DE ENTRADA - - - - - - - - - - - - - - - - - 
+
+// El programa solo puede iniciar con bloques, funciones o procedimientos
+programa = { bloque | funcion | procedimiento } ;
+
+//- - - - - - - - - - - - - - - - Cosas generales - - - - - - - - - - - - - - - - - - - 
 //Ignorar
 comentario = '--' ~[\r\n]*           // Comentario de una línea
            | '/*' .*? '*/';          // Comentario multilínea (lazy para evitar greedy)
@@ -50,10 +55,11 @@ valor          = string | char_literal | numero | fecha | identificador | boolea
 valores        = valor {coma valor};
 
 
-// - - signos - - - - - - - -
+// - - signos - - - - - - - - - -
 puntocoma      = ";";
 asignacion     = ":=";
 coma           = ",";
+dot            = ".";
 
 mas            = "+";
 menos          = "-";
@@ -159,27 +165,50 @@ begin          = "BEGIN";
 end            = "END";
 
 // Un bloque BEGIN...END puede contener sentencias
-bloque         = begin {sentencia} end puntocoma;
+// Declaración opcional al inicio
+bloque         = [ declaracion ] begin { sentencia_en_bloque } end puntocoma;
+
+// Dentro de un bloque, se permiten todas las sentencias
+sentencia_en_bloque = declaracion
+                    | if_simple
+                    | if_else
+                    | case_when
+                    | ciclo_for
+                    | ciclo_foreach_array
+                    | ciclo_foreach_select
+                    | exit_stmt
+                    | continue_stmt
+                    | raise_notice
+                    | raise_warning
+                    | raise_exception
+                    | raise_simple
+                    | trans_commit
+                    | trans_rollback
+                    | funcion
+                    | procedimiento
+                    | bloque
+                    | select_stmt     // dml permitido solo dentro de bloque
+                    | insert_stmt     // dml permitido solo dentro de bloque
+                    | update_stmt     // dml permitido solo dentro de bloque
+                    | delete_stmt     // dml permitido solo dentro de bloque
+                    ;
 
 
 // - - - - - - - - - - - - - - - - Control de flujo - - - - - - - - - - - - - 
 
-if_simple      = "IF" expresion "THEN" {sentencia} "END IF" puntocoma;
-if_else        = "IF" expresion "THEN" {sentencia} "ELSE" {sentencia} "END IF" puntocoma;
+if_simple      = "IF" expresion "THEN" { sentencia_en_bloque } "END IF" puntocoma;
+if_else        = "IF" expresion "THEN" { sentencia_en_bloque } "ELSE" { sentencia_en_bloque } "END IF" puntocoma;
 
-case_when      = "CASE" {"WHEN" expresion "THEN" {sentencia}} ["ELSE" {sentencia}] "END CASE" puntocoma;
+case_when      = "CASE" {"WHEN" expresion "THEN" { sentencia_en_bloque }} ["ELSE" { sentencia_en_bloque }] "END CASE" puntocoma;
 
 
 // - - - - - - - - - - - - - - - - Ciclos - - - - - - - - - - - - - - - - - 
 
-// Ciclo FOR con rango
-ciclo_for      = "FOR" identificador "IN" numero ".." numero "LOOP" {sentencia} "END LOOP" puntocoma;
+ciclo_for      = "FOR" identificador "IN" numero ".." numero "LOOP" { sentencia_en_bloque } "END LOOP" puntocoma;
 
-// Ciclo FOREACH con array
-ciclo_foreach_array = "FOREACH" identificador "IN" "ARRAY" identificador "LOOP" {sentencia} "END LOOP" puntocoma;
+ciclo_foreach_array = "FOREACH" identificador "IN" "ARRAY" identificador "LOOP" { sentencia_en_bloque } "END LOOP" puntocoma;
 
-// Ciclo FOREACH con resultados de SELECT
-ciclo_foreach_select = "FOREACH" identificador "IN" select_stmt "LOOP" {sentencia} "END LOOP" puntocoma;
+ciclo_foreach_select = "FOREACH" identificador "IN" select_stmt "LOOP" { sentencia_en_bloque } "END LOOP" puntocoma;
 
 
 // - - - - - - - - - - - - - - - - Sentencias de control - - - - - - - - - - - - 
@@ -198,45 +227,47 @@ raise_simple   = "RAISE" puntocoma;
 
 // - - - - - - - - - - - - - - - - Transaccionalidad - - - - - - - - - - - - - 
 
-trans_commit   = begin {sentencia} "COMMIT" puntocoma;
-trans_rollback = begin {sentencia} "ROLLBACK" puntocoma;
+trans_commit   = begin { sentencia_en_bloque } "COMMIT" puntocoma;
+trans_rollback = begin { sentencia_en_bloque } "ROLLBACK" puntocoma;
 
 
 // - - - - - - - - - - - - - - - - Funciones y Procedimientos - - - - - - - - - - 
 
-// Función
 funcion = "CREATE FUNCTION" identificador "(" parametros? ")" 
           "RETURNS" tipo 
-          "AS" "$$" {sentencia} "RETURN" valor puntocoma "$$" 
+          "AS" "$$" { sentencia_en_bloque } "RETURN" valor puntocoma "$$" 
           "LANGUAGE plpgsql" puntocoma;
 
-// Procedimiento
 procedimiento = "CREATE PROCEDURE" identificador "(" parametros? ")" 
-                "LANGUAGE plpgsql" "AS" "$$" {sentencia} "$$" puntocoma;
+                "LANGUAGE plpgsql" "AS" "$$" { sentencia_en_bloque } "$$" puntocoma;
 
-// Parámetros de función/procedimiento
 parametros = parametro {coma parametro};
 parametro  = identificador tipo;
 
 
-// - - - - - - - - - - - - - - - - Sentencias generales - - - - - - - - - - - - 
+// - - - - - - - - - - - - - - - - DML - - - - -  - - - - - - - - - - - 
 
-sentencia = declaracion
-          | if_simple
-          | if_else
-          | case_when
-          | ciclo_for
-          | ciclo_foreach_array
-          | ciclo_foreach_select
-          | exit_stmt
-          | continue_stmt
-          | raise_notice
-          | raise_warning
-          | raise_exception
-          | raise_simple
-          | trans_commit
-          | trans_rollback
-          | funcion
-          | procedimiento
-          | bloque
-          ;
+insert_stmt     = "INSERT", "INTO", identificador, "(", columnas, ")", 
+                  "VALUES", "(", valores, ")", puntocoma ;
+
+update_stmt     = "UPDATE", identificador, "SET", asignaciones, 
+                  "WHERE", condicion, puntocoma ;
+
+delete_stmt     = "DELETE", "FROM", identificador, 
+                  "WHERE", condicion, puntocoma ;
+
+select_stmt     = "SELECT", columnas, "FROM", identificador, 
+                  [ join_list ], [ where_clause ], puntocoma ;
+
+columna_prefijo = [ identificador, dot ], identificador ;
+columnas        = columna_prefijo, { coma, columna_prefijo } ;
+
+join_list       = join_clause, { join_clause } ;
+join_clause     = ( "JOIN" | "LEFT", "JOIN" ), identificador, 
+                  "ON", columna_prefijo, igual, columna_prefijo ;
+
+asignaciones    = identificador, igual, valor, 
+                  { coma, identificador, igual, valor } ;
+
+where_clause    = "WHERE", expresion ;
+condicion       = expresion ;
