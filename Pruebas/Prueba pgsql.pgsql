@@ -83,6 +83,7 @@ END;
 -- Funcion - - - - - - - - - -
 CREATE FUNCTION mi_funcion (nombre VARCHAR(20), apellido VARCHAR(10)) RETURNS INTEGER
 AS $$
+    BEGIN
     -- Select normal
     SELECT id, nombre FROM usuarios;
 
@@ -98,6 +99,7 @@ AS $$
 
 
     RETURN  animalito; 
+    END; 
 $$ LANGUAGE plpgsql; 
 
 
@@ -137,142 +139,103 @@ $$;
 
 
 
+-- algo grande xd
+-- Ejemplo completo de prueba para la gramática
 
-
-
-
-
-
-
-
-
-
-
-
-
--- ============================
--- Pruebas de gramática PGSQL
--- ============================
-
--- Declaraciones simples
+-- Procedimiento
+CREATE PROCEDURE ejemplo_prueba()
+LANGUAGE plpgsql
+AS $$
 DECLARE
-    x INTEGER;
-    y DECIMAL := 10.5;
-    flag BOOLEAN := TRUE;
-    letra CHAR := 'A';
-    fecha DATE := '2025-08-31';
-    texto VARCHAR(50) := "hola mundo";
-    arr_int INTEGER[];
-    arr_varchar VARCHAR(20)[] := ARRAY["uno", "dos", "tres"];
-
+    fecha_actual DATE := NOW();
+    fecha_modificada DATE;
+    saludo VARCHAR(50);
+    numero_aleatorio DECIMAL;
+    sub_texto VARCHAR(20);
+    numeros INTEGER[] := ARRAY[1,2,3];
+    len_texto INTEGER;
+    len_array INTEGER;
 BEGIN
-    -- Asignaciones
-    x := 5;
-    y := y + 2.5;
-    flag := NOT FALSE;
-    texto := CONCAT("prueba", " concatenada");
+    -- MODIFICAR FECHA
+    fecha_modificada := MODIFY_DATE(fecha_actual, 2, 1, 0);
+    RAISE NOTICE "Fecha modificada: %", fecha_modificada;
 
-    -- IF simple
-    IF x > 3 THEN
-        RAISE NOTICE "x es mayor a 3";
-    END IF;
+    -- CONCAT y CAST
+    saludo := CONCAT("Hola", " ", "PL/pgSQL!");
+    RAISE NOTICE "Saludo concatenado: %", saludo;
+    numero_aleatorio := CAST(RANDOM(), DECIMAL);
 
-    -- IF ELSE
-    IF flag THEN
-        RAISE NOTICE "flag true";
+    -- SUBSTRING
+    sub_texto := SUBSTRING(saludo, 6, 7); -- "PL/pgSQL"
+    RAISE NOTICE "Subcadena: %", sub_texto;
+
+    -- ARRAY_PUSH
+    numeros := ARRAY_PUSH(numeros, 4);
+    RAISE NOTICE "Array actualizado: %", numeros;
+
+    -- LEN
+    len_texto := LEN(saludo);
+    len_array := LEN(numeros);
+    RAISE NOTICE "Longitud texto: %, Longitud array: %", len_texto, len_array;
+
+    -- CICLO FOR
+    FOR i IN 1..3 LOOP
+        RAISE NOTICE "Iteración FOR: %", i;
+    END LOOP;
+
+    -- CICLO FOREACH ARRAY
+    FOREACH n IN ARRAY numeros LOOP
+        RAISE NOTICE "Elemento ARRAY: %", n;
+    END LOOP;
+
+    -- IF_SIMPLE
+    IF numero_aleatorio > 0.5 THEN
+        RAISE NOTICE "Número aleatorio mayor que 0.5: %", numero_aleatorio;
     ELSE
-        RAISE NOTICE "flag false";
+        RAISE NOTICE "Número aleatorio menor o igual que 0.5: %", numero_aleatorio;
     END IF;
 
-    -- CASE WHEN
+    -- CASE_WHEN
     CASE
-        WHEN x = 1 THEN
-            RAISE NOTICE "x es uno";
-        WHEN x = 5 THEN
-            RAISE NOTICE "x es cinco";
+        WHEN len_texto < 20 THEN
+            RAISE NOTICE "Texto corto";
+        WHEN len_texto >= 20 THEN
+            RAISE NOTICE "Texto largo";
         ELSE
-            RAISE NOTICE "x es otro valor";
+            RAISE NOTICE "Texto desconocido";
     END CASE;
 
-    -- Ciclo FOR
-    FOR i IN 1..5 LOOP
-        RAISE NOTICE "iteracion: %", i;
-    END LOOP;
+    -- INSERT DML
+    INSERT INTO prueba_tabla (id, nombre, fecha)
+    VALUES (1, saludo, fecha_modificada);
 
-    -- FOREACH con array
-    FOREACH item IN ARRAY arr_varchar LOOP
-        RAISE NOTICE "elemento: %", item;
-    END LOOP;
+    -- UPDATE DML
+    UPDATE prueba_tabla SET nombre = CONCAT(nombre, " actualizado") WHERE id = 1;
 
-    -- FOREACH con SELECT
-    FOREACH fila IN
-        SELECT id, nombre FROM usuarios
-    LOOP
-        RAISE NOTICE "usuario: %", fila;
-    END LOOP;
-
-    -- Exit y continue
-    FOR i IN 1..10 LOOP
-        IF i = 5 THEN
-            EXIT;
-        END IF;
-        IF i % 2 = 0 THEN
-            CONTINUE;
-        END IF;
-    END LOOP;
-
-    -- RAISE variantes
-    RAISE NOTICE "Hola %", x;
-    RAISE WARNING "Advertencia con valor %", y;
-    RAISE EXCEPTION "Excepcion: %", flag;
-    RAISE;
-
-    -- Transacciones dentro de bloque
-    BEGIN
-        INSERT INTO usuarios (id, nombre) VALUES (1, "Ana");
-        COMMIT;
-    END;
-
-    BEGIN
-        UPDATE usuarios SET nombre := "Pedro" WHERE id = 1;
-        ROLLBACK;
-    END;
-
-    -- DML
-    INSERT INTO usuarios (id, nombre) VALUES (2, "Juan");
-
-    UPDATE usuarios
-    SET nombre := "Maria", fecha := NOW()
-    WHERE id = 2;
-
-    DELETE FROM usuarios WHERE id = 2;
-
-    SELECT u.id, u.nombre, o.orden_id
-    FROM usuarios u
-    JOIN ordenes o ON u.id = o.usuario_id
-    LEFT JOIN pagos p ON o.orden_id = p.orden_id
-    WHERE u.nombre = "Ana";
-
+    -- DELETE DML
+    DELETE FROM prueba_tabla WHERE id = 1;
 END;
-
--- ===================================
--- Definición de función y procedimiento
--- ===================================
-
-CREATE FUNCTION sumar(a INTEGER, b INTEGER) RETURNS INTEGER
-AS $$
-    DECLARE
-        resultado INTEGER;
-    BEGIN
-        resultado := a + b;
-        RETURN resultado;
-    END;
-$$ LANGUAGE plpgsql;
-
-CREATE PROCEDURE insertar_usuario(id INTEGER, nombre VARCHAR(50))
-LANGUAGE plpgsql AS $$
-    BEGIN
-        INSERT INTO usuarios (id, nombre) VALUES (id, nombre);
-    END;
 $$;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

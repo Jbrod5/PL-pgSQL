@@ -34,11 +34,11 @@ func_builtin
     | RANDOM_FUNC
     //Funciones que necesitan parametros - - - -
     | CONCAT_FUNC LPAR valores RPAR
-    | MODIFY_DATE_FUNC
-    | CAST_FUNC
-    | SUBSTRING_FUNC
-    | ARRAY_PUSH_FUNC
-    | LEN_FUNC
+    | MODIFY_DATE_FUNC LPAR  valor COMA valor COMA valor COMA valor  RPAR
+    | CAST_FUNC LPAR valor COMA tipo RPAR
+    | SUBSTRING_FUNC LPAR valor COMA valor COMA valor RPAR
+    | ARRAY_PUSH_FUNC LPAR valor COMA valor  RPAR 
+    | LEN_FUNC LPAR valor RPAR 
     ;
 
 
@@ -259,7 +259,7 @@ raise_simple
 // Funciones y procedimientos
 funcion
     : CREATE_FUNCTION IDENTIFICADOR LPAR parametros? RPAR RETURNS tipo
-      AS DOLLAR_DOLLAR  sentencia_en_bloque_funcion*  DOLLAR_DOLLAR LANGUAGE PLPGSQL PUNTOCOMA
+      AS DOLLAR_DOLLAR  declaracion? BEGIN sentencia_en_bloque_funcion*  END PUNTOCOMA DOLLAR_DOLLAR LANGUAGE PLPGSQL PUNTOCOMA
     ;
 
 
@@ -267,7 +267,13 @@ funcion
 
 
 procedimiento
-    : CREATE_PROCEDURE IDENTIFICADOR LPAR parametros? RPAR LANGUAGE PLPGSQL AS DOLLAR_DOLLAR BEGIN sentencia_en_bloque_procedimiento*  END PUNTOCOMA DOLLAR_DOLLAR PUNTOCOMA
+    : CREATE_PROCEDURE IDENTIFICADOR LPAR parametros? RPAR LANGUAGE PLPGSQL 
+    AS DOLLAR_DOLLAR 
+    declaracion?
+    BEGIN 
+    sentencia_en_bloque_procedimiento*  
+    END PUNTOCOMA 
+    DOLLAR_DOLLAR PUNTOCOMA
     ;
 
 parametros
