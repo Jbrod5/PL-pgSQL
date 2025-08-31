@@ -7,6 +7,10 @@ NOTACION EBNF:
 ; -> final de regla
 
 //- - - - - - - - - - - - - - - Cosas generales - - - - - - - - - - - - - - - 
+//Ignorar
+ comentario = '--' ~[\r\n]* //una liena
+            | '/*' (~["\r\n])* '*/';
+             
 
 // - - valores - - - - - - - -
 letra          = ("a"_"z"|"A"_"Z");
@@ -17,7 +21,7 @@ true           = "TRUE";
 false          = "FALSE";
 
 booleano       = true | false;
-string         = '"' (~["\r\n])* '"';      '// Texto con comillas dobles
+string         = '"' (~["\r\n])* '"';      // Texto con comillas dobles
 char_literal   = "'" (letra|digito) "'";   // Un solo carácter con comillas simples
 numero         = digito+;
 fecha          = digito digito digito digito "-" digito digito "-" digito digito;

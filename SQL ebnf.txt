@@ -7,6 +7,10 @@ NOTACION EBNF:
 ; -> final de regla
 
 - - - - - - - - - - - - - - - - - - - - COSAS GENERALES - - - - - - - - - - - - - - - - - - - -
+//Ignorar
+ comentario = '--' ~[\r\n]* //una liena
+            | '/*' (~["\r\n])* '*/';
+
 
 letra = ("a"_"z"|"A"_"Z");
 digito = "0"_"9";
