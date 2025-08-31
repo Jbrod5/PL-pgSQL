@@ -126,3 +126,65 @@ valor_condicional_booleano = op_mayor_que
                             | op_and
                             | op_not
                             ;
+
+
+// - - - - - - - - - - - - - - - - Bloques de código - - - - - - - - - - - - - 
+
+begin          = "BEGIN";
+end            = "END";
+
+// Un bloque BEGIN...END puede contener sentencias
+bloque         = begin {sentencia} end puntocoma;
+
+
+// - - - - - - - - - - - - - - - - Control de flujo - - - - - - - - - - - - - 
+
+if_simple      = "IF" expresion "THEN" {sentencia} "END IF" puntocoma;
+if_else        = "IF" expresion "THEN" {sentencia} "ELSE" {sentencia} "END IF" puntocoma;
+
+case_when      = "CASE" {"WHEN" expresion "THEN" {sentencia}} ["ELSE" {sentencia}] "END CASE" puntocoma;
+
+
+// - - - - - - - - - - - - - - - - Ciclos - - - - - - - - - - - - - - - - - 
+
+// Ciclo FOR con rango
+ciclo_for      = "FOR" identificador "IN" numero ".." numero "LOOP" {sentencia} "END LOOP" puntocoma;
+
+// Ciclo FOREACH con array
+ciclo_foreach_array = "FOREACH" identificador "IN" "ARRAY" identificador "LOOP" {sentencia} "END LOOP" puntocoma;
+
+// Ciclo FOREACH con resultados de SELECT
+ciclo_foreach_select = "FOREACH" identificador "IN" select_stmt "LOOP" {sentencia} "END LOOP" puntocoma;
+
+
+// - - - - - - - - - - - - - - - - Sentencias de control - - - - - - - - - - - - 
+
+exit_stmt      = "EXIT" puntocoma;
+continue_stmt  = "CONTINUE" puntocoma;
+
+
+// - - - - - - - - - - - - - - - - Mensajes RAISE - - - - - - - - - - - - - 
+
+raise_notice   = "RAISE NOTICE" string {coma valor} puntocoma;
+raise_warning  = "RAISE WARNING" string {coma valor} puntocoma;
+raise_exception= "RAISE EXCEPTION" string {coma valor} puntocoma;
+raise_simple   = "RAISE" puntocoma;
+
+
+// - - - - - - - - - - - - - - - - Sentencias generales - - - - - - - - - - - - 
+
+sentencia = declaracion
+          | if_simple
+          | if_else
+          | case_when
+          | ciclo_for
+          | ciclo_foreach_array
+          | ciclo_foreach_select
+          | exit_stmt
+          | continue_stmt
+          | raise_notice
+          | raise_warning
+          | raise_exception
+          | raise_simple
+          | bloque
+          ;
