@@ -8,9 +8,9 @@ NOTACION EBNF:
 
 //- - - - - - - - - - - - - - - Cosas generales - - - - - - - - - - - - - - - 
 //Ignorar
- comentario = '--' ~[\r\n]* //una liena
-            | '/*' (~["\r\n])* '*/';
-             
+comentario = '--' ~[\r\n]*           // Comentario de una línea
+           | '/*' .*? '*/';          // Comentario multilínea (lazy para evitar greedy)
+
 
 // - - valores - - - - - - - -
 letra          = ("a"_"z"|"A"_"Z");
@@ -26,8 +26,29 @@ char_literal   = "'" (letra|digito) "'";   // Un solo carácter con comillas sim
 numero         = digito+;
 fecha          = digito digito digito digito "-" digito digito "-" digito digito;
 
-valor          = string | char_literal | numero | fecha | identificador | booleano;
+// Funciones Built-in como valores
+func_builtin   = now_func
+               | concat_func
+               | modify_date_func
+               | cast_func
+               | random_func
+               | substring_func
+               | array_push_func
+               | len_func;
+
+// Definición de funciones integradas
+now_func           = "NOW" "(" ")";
+concat_func        = "CONCAT" "(" valor {coma valor} ")";
+modify_date_func   = "MODIFY_DATE" "(" valor coma "day:" numero coma "month:" numero coma "year:" numero ")";
+cast_func          = "CAST" "(" valor coma tipo ")";
+random_func        = "RANDOM" "(" ")";
+substring_func     = "SUBSTRING" "(" valor coma numero coma numero ")";
+array_push_func    = "ARRAY_PUSH" "(" valor coma valor ")";
+len_func           = "LEN" "(" valor ")";
+
+valor          = string | char_literal | numero | fecha | identificador | booleano | func_builtin;
 valores        = valor {coma valor};
+
 
 // - - signos - - - - - - - -
 puntocoma      = ";";
@@ -175,6 +196,29 @@ raise_exception= "RAISE EXCEPTION" string {coma valor} puntocoma;
 raise_simple   = "RAISE" puntocoma;
 
 
+// - - - - - - - - - - - - - - - - Transaccionalidad - - - - - - - - - - - - - 
+
+trans_commit   = begin {sentencia} "COMMIT" puntocoma;
+trans_rollback = begin {sentencia} "ROLLBACK" puntocoma;
+
+
+// - - - - - - - - - - - - - - - - Funciones y Procedimientos - - - - - - - - - - 
+
+// Función
+funcion = "CREATE FUNCTION" identificador "(" parametros? ")" 
+          "RETURNS" tipo 
+          "AS" "$$" {sentencia} "RETURN" valor puntocoma "$$" 
+          "LANGUAGE plpgsql" puntocoma;
+
+// Procedimiento
+procedimiento = "CREATE PROCEDURE" identificador "(" parametros? ")" 
+                "LANGUAGE plpgsql" "AS" "$$" {sentencia} "$$" puntocoma;
+
+// Parámetros de función/procedimiento
+parametros = parametro {coma parametro};
+parametro  = identificador tipo;
+
+
 // - - - - - - - - - - - - - - - - Sentencias generales - - - - - - - - - - - - 
 
 sentencia = declaracion
@@ -190,5 +234,9 @@ sentencia = declaracion
           | raise_warning
           | raise_exception
           | raise_simple
+          | trans_commit
+          | trans_rollback
+          | funcion
+          | procedimiento
           | bloque
           ;
