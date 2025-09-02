@@ -21,6 +21,8 @@ public class Tabla {
     private LinkedList<String> tipos;
     private LinkedList<String> nombreColumnas;
 
+    private LinkedList<ForeignKeyConstraint> foreignKeys;
+
     private LinkedList<LinkedList<String>> contenido;
 
 
@@ -39,6 +41,15 @@ public class Tabla {
         this.nombre = nombreTabla;
 
         contenido = new LinkedList<>();
+        foreignKeys = new LinkedList<>();
+
+
+        //Manejar la carga de las listas de permisos :3
+        permSelect = new LinkedList<>();
+        permInsert = new LinkedList<>();
+        permUpdate = new LinkedList<>();
+        permDelete = new LinkedList<>();
+
     }
 
 
@@ -80,6 +91,10 @@ public class Tabla {
 
         // 4. Agregar la tupla validada al contenido
         contenido.add(nuevaTupla);
+
+        // 5. Validar claves foráneas
+        validarFks(nuevaTupla);
+
     }
 
 
@@ -222,4 +237,156 @@ public class Tabla {
         }
     }
 
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - Llaves foraneas - - - - - - - - - - - - - - - - - - - - - - - -
+    /* Agrega una constraint de Foreign Key */
+    public void agregarConstraintFK(String nombreConstraint, String columnaLocal, Tabla tablaReferenciada, String columnaReferenciada) {
+        // Validar que no exista ya el constraint
+        for (ForeignKeyConstraint fk : foreignKeys) {
+            if (fk.nombreConstraint.equals(nombreConstraint)) {
+                throw new IllegalArgumentException("Ya existe un constraint con ese nombre: " + nombreConstraint);
+            }
+        }
+
+        // Validar columna local existe
+        int indiceLocal = buscarIndiceColumna(columnaLocal);
+        if (indiceLocal == -1) {
+            throw new IllegalArgumentException("Columna local no encontrada: " + columnaLocal);
+        }
+
+        // Validar columna referenciada existe
+        int indiceReferenciada = tablaReferenciada.buscarIndiceColumna(columnaReferenciada);
+        if (indiceReferenciada == -1) {
+            throw new IllegalArgumentException("Columna referenciada no encontrada en tabla " + tablaReferenciada.nombre + ": " + columnaReferenciada);
+        }
+
+        // Validar que columna referenciada sea PK
+        if (!"pk".equalsIgnoreCase(tablaReferenciada.caractaristicas.get(indiceReferenciada))) {
+            throw new IllegalArgumentException("La columna referenciada no es PK: " + columnaReferenciada);
+        }
+
+        // Guardar constraint
+        foreignKeys.add(new ForeignKeyConstraint(nombreConstraint, columnaLocal, tablaReferenciada, columnaReferenciada));
+
+        // Marcar columna local como FK
+        caractaristicas.set(indiceLocal, "fk");
+    }
+
+    /* Elimina una constraint de Foreign Key */
+    public void eliminarConstraintFK(String nombreConstraint) {
+        ForeignKeyConstraint toRemove = null;
+        for (ForeignKeyConstraint fk : foreignKeys) {
+            if (fk.nombreConstraint.equals(nombreConstraint)) {
+                toRemove = fk;
+                break;
+            }
+        }
+        if (toRemove == null) {
+            throw new IllegalArgumentException("Constraint no encontrada: " + nombreConstraint);
+        }
+
+        // Desmarcar columna
+        int indiceLocal = buscarIndiceColumna(toRemove.columnaLocal);
+        if (indiceLocal != -1) {
+            caractaristicas.set(indiceLocal, "none");
+        }
+
+        foreignKeys.remove(toRemove);
+    }
+
+
+
+
+
+
+    private void validarFks(LinkedList<String> nuevaTupla) {
+        for (ForeignKeyConstraint fk : foreignKeys) {
+            int indiceLocal = buscarIndiceColumna(fk.columnaLocal);
+            String valorLocal = nuevaTupla.get(indiceLocal);
+
+            if (valorLocal == null) continue; // null permitido
+
+            int indiceReferenciada = fk.tablaReferenciada.buscarIndiceColumna(fk.columnaReferenciada);
+            boolean existe = false;
+            for (LinkedList<String> fila : fk.tablaReferenciada.contenido) {
+                if (valorLocal.equals(fila.get(indiceReferenciada))) {
+                    existe = true;
+                    break;
+                }
+            }
+            if (!existe) {
+                throw new IllegalArgumentException("Violación de FK en " + fk.columnaLocal + ": valor " + valorLocal + " no existe en tabla " + fk.tablaReferenciada.nombre);
+            }
+        }
+    }
+
+
+
+
+
+
+
+    // Getters
+
+
+    public String getNombre() {
+        return nombre;
+    }
+
+
+
+
+
+
+
+
+
+    //exportar yaml :3
+    public String exportarAYaml() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("  - nombre_tabla: \"" + nombre + "\"\n");
+
+        // Usuarios
+        sb.append("    usuarios:\n");
+        sb.append("      select: " + listaAYaml(permSelect) + "\n");
+        sb.append("      insert: " + listaAYaml(permInsert) + "\n");
+        sb.append("      update: " + listaAYaml(permUpdate) + "\n");
+        sb.append("      delete: " + listaAYaml(permDelete) + "\n");
+
+        // Valores
+        sb.append("    valores:\n");
+        sb.append("      caracteristicas: " + listaAYaml(caractaristicas) + "\n");
+        sb.append("      tipos: " + listaAYaml(tipos) + "\n");
+        sb.append("      nombres_columnas: " + listaAYaml(nombreColumnas) + "\n");
+
+        sb.append("      filas:\n");
+        for (LinkedList<String> fila : contenido) {
+            sb.append("       - " + listaAYaml(fila) + "\n");
+        }
+
+        // Foreign Keys
+        if (!foreignKeys.isEmpty()) {
+            sb.append("    foreign_keys:\n");
+            for (ForeignKeyConstraint fk : foreignKeys) {
+                sb.append("      - nombre_constraint: \"" + fk.nombreConstraint + "\"\n");
+                sb.append("        columna_local: \"" + fk.columnaLocal + "\"\n");
+                sb.append("        tabla_referenciada: \"" + fk.tablaReferenciada.getNombre() + "\"\n");
+                sb.append("        columna_referenciada: \"" + fk.columnaReferenciada + "\"\n");
+            }
+        }
+
+        return sb.toString();
+    }
+
+    // Método auxiliar para formatear listas como YAML
+    private String listaAYaml(LinkedList<String> lista) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        for (int i = 0; i < lista.size(); i++) {
+            sb.append(lista.get(i));
+            if (i != lista.size() - 1) sb.append(", ");
+        }
+        sb.append("]");
+        return sb.toString();
+    }
 }

@@ -101,6 +101,12 @@ tablas:
          - [valor 1, valor 2, valor 4]
          - [nombree, 33, true]
          - etc
+     #llaves foraneas
+    foreign_keys:
+      - nombre_constraint: "FK_Constraint_1"
+        columna_local: "casado"
+        tabla_referenciada: "OtraTabla"
+        columna_referenciada: "id_otratabla"
   # - - - - - - - - - - - - - - - - - - Final de la tabla - - - - - - - - - - - - - - - - - -
 
 
