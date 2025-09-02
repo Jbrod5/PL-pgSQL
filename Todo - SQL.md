@@ -93,6 +93,7 @@ tablas:
         - usuario1
     #definicion de valores
     valores:
+        caracteristicas: [pk,       , fk]
         tipos: [varchar(50), integer, boolean]
         nombres_columnas: [nombre, edad, casado]
         filas: 
