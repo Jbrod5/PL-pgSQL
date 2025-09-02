@@ -5,12 +5,12 @@ import java.util.LinkedList;
 public class MainPruebaMotorSQL {
 
     public static void main(String[] args) {
-        Esquema esquema = new Esquema("PruebaEsquemaaaaaa");
+        Esquema esquema = new Esquema("EsquemaCompleto");
 
-        // ----------------- Tabla Departamentos -----------------
+        // - - - - - - - - Crear tabla Departamentos - - - - - - -
         LinkedList<String> caractDep = new LinkedList<>();
-        caractDep.add("pk"); // id_departamento es PK
-        caractDep.add("");   // nombre sin restricción
+        caractDep.add("pk");
+        caractDep.add("");
 
         LinkedList<String> tiposDep = new LinkedList<>();
         tiposDep.add("INTEGER");
@@ -21,14 +21,13 @@ public class MainPruebaMotorSQL {
         colsDep.add("nombre");
 
         esquema.agregarTabla("Departamentos", caractDep, tiposDep, colsDep);
-        System.out.println("🔹 YAML después de agregar la tabla Departamentos:");
-        System.out.println(esquema.exportarAYaml());
+        System.out.println("🔹 YAML después de agregar tabla Departamentos:\n" + esquema.exportarAYaml());
 
-        // ----------------- Tabla Empleados -----------------
+        // - - - - - - - - - Crear tabla Empleados - - - - - - - -
         LinkedList<String> caractEmp = new LinkedList<>();
-        caractEmp.add("pk");  // id_empleado es PK
-        caractEmp.add("");    // nombre sin restricción
-        caractEmp.add("fk");  // departamento es FK
+        caractEmp.add("pk");
+        caractEmp.add("");
+        caractEmp.add("fk");
 
         LinkedList<String> tiposEmp = new LinkedList<>();
         tiposEmp.add("INTEGER");
@@ -41,10 +40,9 @@ public class MainPruebaMotorSQL {
         colsEmp.add("departamento");
 
         esquema.agregarTabla("Empleados", caractEmp, tiposEmp, colsEmp);
-        System.out.println("🔹 YAML después de agregar la tabla Empleados:");
-        System.out.println(esquema.exportarAYaml());
+        System.out.println("🔹 YAML después de agregar tabla Empleados:\n" + esquema.exportarAYaml());
 
-        // ----------------- Agregar constraint FK -----------------
+        // - - - - - - - - Agregar FK - - - - - - - -
         esquema.agregarConstraintFKTabla(
                 "Empleados",
                 "FK_Empleado_Departamento",
@@ -52,10 +50,9 @@ public class MainPruebaMotorSQL {
                 "Departamentos",
                 "id_departamento"
         );
-        System.out.println("🔹 YAML después de agregar la FK:");
-        System.out.println(esquema.exportarAYaml());
+        System.out.println("🔹 YAML después de agregar FK:\n" + esquema.exportarAYaml());
 
-        // ----------------- Insertar datos válidos -----------------
+        // - - - - - - - - Insertar tupla válida - - - - - - - - -
         LinkedList<String> colsInsertDep = new LinkedList<>();
         colsInsertDep.add("id_departamento");
         colsInsertDep.add("nombre");
@@ -65,10 +62,7 @@ public class MainPruebaMotorSQL {
         valsInsertDep.add("\"Recursos Humanos\"");
 
         esquema.agregarTuplaEnTabla("Departamentos", colsInsertDep, valsInsertDep);
-        System.out.println("🔹 YAML después de insertar en Departamentos:");
-        System.out.println(esquema.exportarAYaml());
 
-        // Insert válido en Empleados (FK existe en Departamentos)
         LinkedList<String> colsInsertEmp1 = new LinkedList<>();
         colsInsertEmp1.add("id_empleado");
         colsInsertEmp1.add("nombre");
@@ -77,34 +71,45 @@ public class MainPruebaMotorSQL {
         LinkedList<String> valsInsertEmp1 = new LinkedList<>();
         valsInsertEmp1.add("100");
         valsInsertEmp1.add("\"Juan Pérez\"");
-        valsInsertEmp1.add("1"); // FK válida
+        valsInsertEmp1.add("1");
 
         esquema.agregarTuplaEnTabla("Empleados", colsInsertEmp1, valsInsertEmp1);
-        System.out.println("✅ Insert válido en Empleados realizado con éxito.");
-        System.out.println("🔹 YAML después de insertar en Empleados:");
-        System.out.println(esquema.exportarAYaml());
+        System.out.println("🔹 YAML después de insertar tupla válida:\n" + esquema.exportarAYaml());
 
-        // ----------------- Insert inválido (FK no existe) -----------------
-        LinkedList<String> colsInsertEmp2 = new LinkedList<>();
-        colsInsertEmp2.add("id_empleado");
-        colsInsertEmp2.add("nombre");
-        colsInsertEmp2.add("departamento");
-
+        // - - - - - - Insertar tupla inválida (FK) - - - - - - -
         LinkedList<String> valsInsertEmp2 = new LinkedList<>();
         valsInsertEmp2.add("101");
         valsInsertEmp2.add("\"Ana Torres\"");
-        valsInsertEmp2.add("999"); // 🚨 FK inválida
+        valsInsertEmp2.add("999");
 
         try {
-            esquema.agregarTuplaEnTabla("Empleados", colsInsertEmp2, valsInsertEmp2);
+            esquema.agregarTuplaEnTabla("Empleados", colsInsertEmp1, valsInsertEmp2);
         } catch (IllegalArgumentException e) {
-            System.out.println("⚠️ Error esperado por FK inválida: " + e.getMessage());
+            System.out.println("⚠️ Error esperado al insertar FK inválida: " + e.getMessage());
         }
+        System.out.println("🔹 YAML después de intentar insertar tupla inválida:\n" + esquema.exportarAYaml());
 
-        // ----------------- ALTER TABLE: agregar nueva columna -----------------
+        // - - - - - - - Agregar columna - - - - - - - -
         esquema.agregarColumnaTabla("Empleados", "salario", "DECIMAL");
-        System.out.println("✅ Columna 'salario' agregada a Empleados con éxito.");
-        System.out.println("🔹 YAML después de agregar columna 'salario':");
-        System.out.println(esquema.exportarAYaml());
+        System.out.println("🔹 YAML después de agregar columna 'salario':\n" + esquema.exportarAYaml());
+
+        // - - - - - - - Permisos - - - - - - - -
+
+
+        // Agregar permisos
+        esquema.agregarPermisoSelect("Empleados", "mario");
+        esquema.agregarPermisoInsert("Empleados","juanito");
+        esquema.agregarPermisoUpdate("Empleados","mario");
+        esquema.agregarPermisoDelete("Empleados","juanito");
+
+        System.out.println("🔹 YAML después de agregar permisos:\n" + esquema.exportarAYaml());
+
+        // Eliminar permisos
+        esquema.eliminarPermisoSelect("Empleados","mario");
+        esquema.eliminarPermisoInsert("Empleados","juanito");
+        esquema.eliminarPermisoUpdate("Empleados","mario");
+        esquema.eliminarPermisoDelete("Empleados","juanito");
+
+        System.out.println("🔹 YAML después de eliminar permisos:\n" + esquema.exportarAYaml());
     }
 }

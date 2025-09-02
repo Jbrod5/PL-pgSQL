@@ -214,6 +214,8 @@ public class Esquema {
 
 
 
-
-
+    //Getters
+    public String getNombre() {
+        return nombre;
+    }
 }
