@@ -124,10 +124,81 @@ public class Esquema {
 
 
 
+    // - - - - - - - - - - - - - - - - - - - Permisos  - - - - - - - - - - - - - - - - - - -
+    //dar permisos
+    public void agregarPermisoSelect(String nombreTabla, String usuario){
+        int indiceTabla = obtenerIndiceTabla(nombreTabla);
+        if(indiceTabla == -1){
+            throw new IllegalArgumentException("Se quiso agregar permiso de Select en la tabla: " + nombreTabla + " pero no existe en el esquema: " + nombre + ".");
+        }
+
+        tablas.get(indiceTabla).agregarPermisoSelect(usuario);
+    }
+    public void agregarPermisoInsert(String nombreTabla, String usuario){
+        int indiceTabla = obtenerIndiceTabla(nombreTabla);
+        if(indiceTabla == -1){
+            throw new IllegalArgumentException("Se quiso agregar permiso de Insert en la tabla: " + nombreTabla + " pero no existe en el esquema: " + nombre + ".");
+        }
+
+        tablas.get(indiceTabla).agregarPermisoInsert(usuario);
+    }
+    public void agregarPermisoDelete(String nombreTabla, String usuario){
+        int indiceTabla = obtenerIndiceTabla(nombreTabla);
+        if(indiceTabla == -1){
+            throw new IllegalArgumentException("Se quiso agregar permiso de Delete en la tabla: " + nombreTabla + " pero no existe en el esquema: " + nombre + ".");
+        }
+
+        tablas.get(indiceTabla).agregarPermisoDelete(usuario);
+    }
+    public void agregarPermisoUpdate(String nombreTabla, String usuario){
+        int indiceTabla = obtenerIndiceTabla(nombreTabla);
+        if(indiceTabla == -1){
+            throw new IllegalArgumentException("Se quiso agregar permiso de Update en la tabla: " + nombreTabla + " pero no existe en el esquema: " + nombre + ".");
+        }
+
+        tablas.get(indiceTabla).agregarPermisoUpdate(usuario);
+    }
+
+    //revocar permisos
+    public void eliminarPermisoSelect(String nombreTabla, String usuario){
+        int indiceTabla = obtenerIndiceTabla(nombreTabla);
+        if(indiceTabla == -1){
+            throw new IllegalArgumentException("Se quiso eliminar permiso de Select en la tabla: " + nombreTabla + " pero no existe en el esquema: " + nombre + ".");
+        }
+
+        tablas.get(indiceTabla).eliminarPermisoSelect(usuario);
+    }
+    public void eliminarPermisoUpdate(String nombreTabla, String usuario) {
+        int indiceTabla = obtenerIndiceTabla(nombreTabla);
+        if (indiceTabla == -1) {
+            throw new IllegalArgumentException("Se quiso eliminar permiso de Update en la tabla: " + nombreTabla + " pero no existe en el esquema: " + nombre + ".");
+        }
+
+        tablas.get(indiceTabla).eliminarPermisoUpdate(usuario);
+    }
+    public void eliminarPermisoDelete(String nombreTabla, String usuario) {
+        int indiceTabla = obtenerIndiceTabla(nombreTabla);
+        if (indiceTabla == -1) {
+            throw new IllegalArgumentException("Se quiso eliminar permiso de Delete en la tabla: " + nombreTabla + " pero no existe en el esquema: " + nombre + ".");
+        }
+
+        tablas.get(indiceTabla).eliminarPermisoDelete(usuario);
+    }
+    public void eliminarPermisoInsert(String nombreTabla, String usuario) {
+        int indiceTabla = obtenerIndiceTabla(nombreTabla);
+        if (indiceTabla == -1) {
+            throw new IllegalArgumentException("Se quiso eliminar permiso de Insert en la tabla: " + nombreTabla + " pero no existe en el esquema: " + nombre + ".");
+        }
+
+        tablas.get(indiceTabla).eliminarPermisoInsert(usuario);
+    }
 
 
 
-    //Exportar a yaml :3
+
+
+
+        //Exportar a yaml :3
     public String exportarAYaml() {
         StringBuilder sb = new StringBuilder();
         sb.append("---\n");
@@ -139,5 +210,10 @@ public class Esquema {
         sb.append("---\n");
         return sb.toString();
     }
+
+
+
+
+
 
 }

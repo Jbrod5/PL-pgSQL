@@ -389,4 +389,82 @@ public class Tabla {
         sb.append("]");
         return sb.toString();
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - -  - Permisos - - - - - - - - - - - - - - - - - - - - - - - - -  -
+    // Método auxiliar para obtener índice de un usuario en una lista de permisos
+    private int obtenerIndiceUsuario(String usuario, LinkedList<String> lista) {
+        for (int i = 0; i < lista.size(); i++) {
+            if (lista.get(i).equals(usuario)) {
+                return i;
+            }
+        }
+        return -1; // no encontrado
+    }
+
+    // - - - - - - - - - Agregar permisos - - - - - - - - -
+    public void agregarPermisoSelect(String usuario) {
+        if (obtenerIndiceUsuario(usuario, permSelect) == -1) {
+            permSelect.add(usuario);
+        }
+    }
+
+    public void agregarPermisoInsert(String usuario) {
+        if (obtenerIndiceUsuario(usuario, permInsert) == -1) {
+            permInsert.add(usuario);
+        }
+    }
+
+    public void agregarPermisoUpdate(String usuario) {
+        if (obtenerIndiceUsuario(usuario, permUpdate) == -1) {
+            permUpdate.add(usuario);
+        }
+    }
+
+    public void agregarPermisoDelete(String usuario) {
+        if (obtenerIndiceUsuario(usuario, permDelete) == -1) {
+            permDelete.add(usuario);
+        }
+    }
+
+    // - - - - - - - - - Eliminar permisos - - - - - - - - -
+    public void eliminarPermisoSelect(String usuario) {
+        int indice = obtenerIndiceUsuario(usuario, permSelect);
+        if (indice != -1) {
+            permSelect.remove(indice);
+        }
+    }
+
+    public void eliminarPermisoInsert(String usuario) {
+        int indice = obtenerIndiceUsuario(usuario, permInsert);
+        if (indice != -1) {
+            permInsert.remove(indice);
+        }
+    }
+
+    public void eliminarPermisoUpdate(String usuario) {
+        int indice = obtenerIndiceUsuario(usuario, permUpdate);
+        if (indice != -1) {
+            permUpdate.remove(indice);
+        }
+    }
+
+    public void eliminarPermisoDelete(String usuario) {
+        int indice = obtenerIndiceUsuario(usuario, permDelete);
+        if (indice != -1) {
+            permDelete.remove(indice);
+        }
+    }
+
 }
