@@ -89,12 +89,11 @@ public class Tabla {
         // 3. Validar PK no repetida
         validarPkUnica(nuevaTupla);
 
-        // 4. Agregar la tupla validada al contenido
-        contenido.add(nuevaTupla);
-
-        // 5. Validar claves foráneas
+        // 4. Validar claves foraneas
         validarFks(nuevaTupla);
 
+        // 5. Agregar la tupla validada al contenido
+        contenido.add(nuevaTupla);
     }
 
 
