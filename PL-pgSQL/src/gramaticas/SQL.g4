@@ -83,7 +83,6 @@ COMENTARIO
 
 
 
-
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - -  PARSER - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
@@ -108,11 +107,11 @@ valor_op
     ;
 
 valores
-    : valor_op (COMMA valor_op)*
+    : valor1=valor_op (COMMA valorN=valor_op)*
     ;
 
 opciones
-    : IDENTIFICADOR (COMMA IDENTIFICADOR)*
+    : id1=IDENTIFICADOR (COMMA idN=IDENTIFICADOR)*
     ;
 
 
@@ -132,16 +131,16 @@ ddl_sentence
     ;
 
 create_schema
-    : CREATE SCHEMA id = IDENTIFICADOR SEMICOLON    #PRUEBA
+    : CREATE SCHEMA id_create_schema=IDENTIFICADOR SEMICOLON
     ;
 
 use_schema
-    : USE SCHEMA IDENTIFICADOR SEMICOLON
+    : USE SCHEMA id_use_schema=IDENTIFICADOR SEMICOLON
     ;
 
 tipo_dato
     : INTEGER
-    | VARCHAR LPAREN NUMERO RPAREN
+    | VARCHAR LPAREN tam_varchar=NUMERO RPAREN
     | BOOLEAN
     ;
 
@@ -150,11 +149,12 @@ restriccion_columna
     ;
 
 columna
-    : IDENTIFICADOR tipo_dato restriccion_columna
+    : id_col=IDENTIFICADOR tipo=tipo_dato restriccion=restriccion_columna
     ;
 
 llave_foranea
-    : FOREIGN KEY LPAREN IDENTIFICADOR RPAREN REFERENCES IDENTIFICADOR LPAREN IDENTIFICADOR RPAREN
+    : FOREIGN KEY LPAREN id_col_local=IDENTIFICADOR RPAREN
+      REFERENCES id_tab_ref=IDENTIFICADOR LPAREN id_col_ref=IDENTIFICADOR RPAREN
     ;
 
 elemento_tabla
@@ -163,31 +163,31 @@ elemento_tabla
     ;
 
 lista_elementos
-    : elemento_tabla (COMMA elemento_tabla)*
+    : elem1=elemento_tabla (COMMA elemN=elemento_tabla)*
     ;
 
 create_table
-    : CREATE TABLE IDENTIFICADOR LPAREN lista_elementos RPAREN SEMICOLON
+    : CREATE TABLE id_table=IDENTIFICADOR LPAREN lista_elementos RPAREN SEMICOLON
     ;
 
 alter_add_column
-    : ALTER TABLE IDENTIFICADOR ADD COLUMN columna SEMICOLON
+    : ALTER TABLE id_table=IDENTIFICADOR ADD COLUMN columna SEMICOLON
     ;
 
 alter_drop_column
-    : ALTER TABLE IDENTIFICADOR DROP COLUMN IDENTIFICADOR SEMICOLON
+    : ALTER TABLE id_table=IDENTIFICADOR DROP COLUMN id_col=IDENTIFICADOR SEMICOLON
     ;
 
 alter_add_constraint
-    : ALTER TABLE IDENTIFICADOR ADD CONSTRAINT IDENTIFICADOR llave_foranea SEMICOLON
+    : ALTER TABLE id_table=IDENTIFICADOR ADD CONSTRAINT id_constr=IDENTIFICADOR llave_foranea SEMICOLON
     ;
 
 alter_drop_constraint
-    : ALTER TABLE IDENTIFICADOR DROP CONSTRAINT IDENTIFICADOR SEMICOLON
+    : ALTER TABLE id_table=IDENTIFICADOR DROP CONSTRAINT id_constr=IDENTIFICADOR SEMICOLON
     ;
 
 drop_table
-    : DROP TABLE IDENTIFICADOR SEMICOLON
+    : DROP TABLE id_table=IDENTIFICADOR SEMICOLON
     ;
 
 
@@ -202,27 +202,30 @@ dml_sentence
     ;
 
 insert_into
-    : INSERT INTO IDENTIFICADOR LPAREN opciones RPAREN VALUES LPAREN valores RPAREN SEMICOLON
+    : INSERT INTO id_table=IDENTIFICADOR LPAREN opciones RPAREN VALUES LPAREN valores RPAREN SEMICOLON
     ;
 
 asignaciones
-    : IDENTIFICADOR EQUALS valor_op (COMMA IDENTIFICADOR EQUALS valor_op)*
+    : id1=IDENTIFICADOR EQUALS val1=valor_op
+      (COMMA idN=IDENTIFICADOR EQUALS valN=valor_op)*
     ;
 
 update_sentence
-    : UPDATE IDENTIFICADOR SET asignaciones WHERE IDENTIFICADOR EQUALS valor_op SEMICOLON
+    : UPDATE id_table=IDENTIFICADOR SET asignaciones
+      WHERE id_cond_col=IDENTIFICADOR EQUALS val_cond=valor_op SEMICOLON
     ;
 
 delete_sentence
-    : DELETE FROM IDENTIFICADOR WHERE IDENTIFICADOR EQUALS valor_op SEMICOLON
+    : DELETE FROM id_table=IDENTIFICADOR
+      WHERE id_cond_col=IDENTIFICADOR EQUALS val_cond=valor_op SEMICOLON
     ;
 
 columna_prefijo
-    : (IDENTIFICADOR DOT)? IDENTIFICADOR
+    : (id_tab=IDENTIFICADOR DOT)? id_col=IDENTIFICADOR
     ;
 
 columnas
-    : columna_prefijo (COMMA columna_prefijo)*
+    : col1=columna_prefijo (COMMA colN=columna_prefijo)*
     ;
 
 join_type
@@ -231,7 +234,7 @@ join_type
     ;
 
 join_clause
-    : join_type IDENTIFICADOR ON columna_prefijo EQUALS columna_prefijo
+    : join_type id_tab=IDENTIFICADOR ON col_left=columna_prefijo EQUALS col_right=columna_prefijo
     ;
 
 join_list
@@ -239,7 +242,8 @@ join_list
     ;
 
 select_sentence
-    : SELECT columnas FROM IDENTIFICADOR join_list? (WHERE columna_prefijo EQUALS valor_op)? SEMICOLON
+    : SELECT columnas FROM id_tab=IDENTIFICADOR
+      join_list? (WHERE col_cond=columna_prefijo EQUALS val_cond=valor_op)? SEMICOLON
     ;
 
 
@@ -260,22 +264,18 @@ permiso
     ;
 
 tabla_op
-    : IDENTIFICADOR
+    : id_tab=IDENTIFICADOR
     | ALL_SYM
     ;
 
 create_user
-    : CREATE USER IDENTIFICADOR SEMICOLON
+    : CREATE USER id_user=IDENTIFICADOR SEMICOLON
     ;
 
 grant_perm
-    : GRANT permiso ON IDENTIFICADOR DOT tabla_op TO IDENTIFICADOR SEMICOLON
+    : GRANT permiso ON id_schema=IDENTIFICADOR DOT tabla_op TO id_user=IDENTIFICADOR SEMICOLON
     ;
 
 revoke_perm
-    : REVOKE permiso ON IDENTIFICADOR FROM IDENTIFICADOR SEMICOLON
+    : REVOKE permiso ON id_tab=IDENTIFICADOR FROM id_user=IDENTIFICADOR SEMICOLON
     ;
-
-
-
-

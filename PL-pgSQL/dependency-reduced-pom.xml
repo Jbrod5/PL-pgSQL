@@ -17,7 +17,7 @@
               <shadedArtifactAttached>true</shadedArtifactAttached>
               <transformers>
                 <transformer>
-                  <mainClass>org.jbrod.Main</mainClass>
+                  <mainClass>org.jbrod.MainSQLTest</mainClass>
                 </transformer>
               </transformers>
             </configuration>

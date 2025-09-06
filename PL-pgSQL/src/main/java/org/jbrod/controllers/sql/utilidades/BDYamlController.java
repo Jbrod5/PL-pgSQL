@@ -19,6 +19,7 @@ public class BDYamlController {
     public BDYamlController(){
         ruta = "." + File.separator + "/esquemas";
         verificarExistencia();
+        System.out.println("se verificara la existencia de " + ruta);
     }
 
     private void verificarExistencia(){
@@ -36,6 +37,8 @@ public class BDYamlController {
             //Si no existe, crear el directorio
             carpetaEsquemas.mkdir();
         }
+
+        System.out.println("Carpeta creada correctamente.");
     }
 
 

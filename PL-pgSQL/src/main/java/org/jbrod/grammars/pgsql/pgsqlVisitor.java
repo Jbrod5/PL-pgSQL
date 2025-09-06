@@ -1,4 +1,5 @@
 // Generated from /home/jorge/Compi_2/PL-pgSQL/PL-pgSQL/src/gramaticas/pgsql.g4 by ANTLR 4.13.2
+package org.jbrod.grammars.pgsql;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
 /**

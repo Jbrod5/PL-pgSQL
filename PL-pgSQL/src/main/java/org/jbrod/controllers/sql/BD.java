@@ -48,6 +48,8 @@ public class BD {
 
 
     public void crearEsquema(String nombreEsquema){
+        System.out.println("Cantidad de esquemas: " + esquemas.size());
+
         if(obtenerIndiceEsquema(nombreEsquema) == -1){
             //Crear el esquema
             Esquema esquema = new Esquema(nombreEsquema);
@@ -71,6 +73,15 @@ public class BD {
             throw new BadConfigurationException("Se intento agregar una tabla pero no hay un esquema en uso.");
         }
     }
+
+    public void eliminarTabla(String nombreTabla) throws BadConfigurationException{
+        if(esquemaEnUso != null){
+            esquemaEnUso.eliminarTabla(nombreTabla);
+        }else{
+            throw new BadConfigurationException("Se intento eliminar una tabla pero no hay un esquema en uso.");
+        }
+    }
+
 
     public void agregarTuplaEnTabla(String nombreTabla, LinkedList<String> columnas, LinkedList<String> valores) throws BadConfigurationException {
         if(esquemaEnUso != null){
@@ -184,6 +195,7 @@ public class BD {
 
     //Yaml
     public void exportarYamls(){
+        System.out.println(esquemas.isEmpty());
         if(!esquemas.isEmpty()){
             BDYamlController bdYamlController = new BDYamlController();
 

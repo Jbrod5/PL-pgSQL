@@ -9,7 +9,7 @@
           <option name="outputDir" value="$PROJECT_DIR$/src/main/java/org/jbrod/grammars/sql" />
           <option name="libDir" value="" />
           <option name="encoding" value="" />
-          <option name="pkg" value="" />
+          <option name="pkg" value="org.jbrod.grammars.sql" />
           <option name="language" value="Java" />
           <option name="generateVisitor" value="true" />
         </PerGrammarGenerationSettings>
@@ -19,7 +19,7 @@
           <option name="outputDir" value="$PROJECT_DIR$/src/main/java/org/jbrod/grammars/pgsql" />
           <option name="libDir" value="" />
           <option name="encoding" value="" />
-          <option name="pkg" value="" />
+          <option name="pkg" value="org.jbrod.grammars.pgsql" />
           <option name="language" value="Java" />
           <option name="generateVisitor" value="true" />
         </PerGrammarGenerationSettings>

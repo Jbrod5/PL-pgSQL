@@ -25,6 +25,21 @@ public class Esquema {
         }
     }
 
+    /*Elimina una tabla completa del esquema
+     * @param nombreTabla String: nombre de la tabla a eliminar */
+    public void eliminarTabla(String nombreTabla) {
+        int indiceTabla = obtenerIndiceTabla(nombreTabla);
+        if (indiceTabla == -1) {
+            throw new IllegalArgumentException(
+                    "Se intento eliminar la tabla: " + nombreTabla + " desde el esquema: " + nombre + " pero no existe."
+            );
+        }
+
+        tablas.remove(indiceTabla);
+    }
+
+
+
 
 
 

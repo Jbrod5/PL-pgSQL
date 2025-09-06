@@ -3,8 +3,11 @@ package org.jbrod.grammars.sql;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.misc.*;
 import org.antlr.v4.runtime.tree.*;
 import java.util.List;
+import java.util.Iterator;
+import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue", "this-escape"})
 public class SQLParser extends Parser {
@@ -529,35 +532,26 @@ public class SQLParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class Create_schemaContext extends ParserRuleContext {
-		public Create_schemaContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_create_schema; }
-	 
-		public Create_schemaContext() { }
-		public void copyFrom(Create_schemaContext ctx) {
-			super.copyFrom(ctx);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
-	public static class PRUEBAContext extends Create_schemaContext {
 		public Token id;
 		public TerminalNode CREATE() { return getToken(SQLParser.CREATE, 0); }
 		public TerminalNode SCHEMA() { return getToken(SQLParser.SCHEMA, 0); }
 		public TerminalNode SEMICOLON() { return getToken(SQLParser.SEMICOLON, 0); }
 		public TerminalNode IDENTIFICADOR() { return getToken(SQLParser.IDENTIFICADOR, 0); }
-		public PRUEBAContext(Create_schemaContext ctx) { copyFrom(ctx); }
+		public Create_schemaContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_create_schema; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof SQLListener ) ((SQLListener)listener).enterPRUEBA(this);
+			if ( listener instanceof SQLListener ) ((SQLListener)listener).enterCreate_schema(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof SQLListener ) ((SQLListener)listener).exitPRUEBA(this);
+			if ( listener instanceof SQLListener ) ((SQLListener)listener).exitCreate_schema(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SQLVisitor ) return ((SQLVisitor<? extends T>)visitor).visitPRUEBA(this);
+			if ( visitor instanceof SQLVisitor ) return ((SQLVisitor<? extends T>)visitor).visitCreate_schema(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -566,7 +560,6 @@ public class SQLParser extends Parser {
 		Create_schemaContext _localctx = new Create_schemaContext(_ctx, getState());
 		enterRule(_localctx, 10, RULE_create_schema);
 		try {
-			_localctx = new PRUEBAContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(110);
@@ -574,7 +567,7 @@ public class SQLParser extends Parser {
 			setState(111);
 			match(SCHEMA);
 			setState(112);
-			((PRUEBAContext)_localctx).id = match(IDENTIFICADOR);
+			((Create_schemaContext)_localctx).id = match(IDENTIFICADOR);
 			setState(113);
 			match(SEMICOLON);
 			}
